@@ -1,0 +1,18 @@
+TEIA
+1- Disparar: carregar no espaço e depois nas teclas up, left ou right
+Em left ou em right a teia é disparada a 45 graus (https://prnt.sc/w2eg60)
+2- Lançar-se: se tiver usado a teia na diagonal o spider man começa automaticamente a mover-se como um pendulo. Não dá para controlar a direção.
+Os pontos mais altos ficam onde a teia fizer 45 graus
+3- Puxar: Carregando em up ou down a teia encolhe-se ou extende-se (de forma rígida).
+Há um limite para o comprimento da teia (o mesmo do alcance de quando a dispara).
+Se se puxar/esticar a teia a meio do movimento horizontal, este não é interrompido. A teia aumenta ou diminui simultaneamente.
+
+PREDIO
+
+
+CRIMINOSOS
+
+BOMBAS
+
+GOBLIN
+
