@@ -29,17 +29,17 @@ Ou seja, se ele ficar junto à parede, a pessoa precisa de reiniciar o jogo. Est
 
 ### UI
 
-![UI](https://github.com/fpro-feup/public/blob/master/recitas/ui.png)
 
 ### Pacotes
 
 - Pygame
 
 ### Tarefas
-
-1. carregar os níveis
-1. desenhar a matriz do nível
-1. ler teclas e mover as peças
-2. verificar se jogador chegou ao fim do nível
-
+1. Desenhar um nível
+2. Fazer o spider man disparar teias
+3. Se a teia estiver na diagonal, fazê-lo mexer-se como pêndulo
+4. Permitir ao spider man mover-se para cima e para baixo na teia
+5. Dar pontos sempre que a hitbox do spider man toca na de um inimigo (exceto o goblin, que se deve evitar)
+6. Criar 3 tipos de inimigos: criminosos, bombas e goblin
+7. No final de cada nível, criar um novo, mas um pouco mais difícil
 - Atualizado a última vez em 07/12/2020
