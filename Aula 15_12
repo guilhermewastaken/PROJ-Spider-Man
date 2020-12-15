@@ -7,6 +7,22 @@ Os pontos mais altos ficam onde a teia fizer 45 graus
 Há um limite para o comprimento da teia (o mesmo do alcance de quando a dispara).
 Se se puxar/esticar a teia a meio do movimento horizontal, este não é interrompido. A teia aumenta ou diminui simultaneamente.
 
+OI eixo do y e negtivo
+
+Variável de atirar teia ou nao (ativada na tecla de space)
+guardar posicao inicial da teia(com o jogador)
+teia= distancia no x, distancia no y, direcao :left right, up
+A cada ciclo aaumenta-se a teia na direcao certa 0.001 nos dois eixos
+
+edificoi
+matriz em que será 1 se tiver parede, 0 se nao[1111100011111000011100000
+vai ter que ser necessariamente muito grajnde
+
+
+1- desenhar jogador e dar-lhe ,movimento na horizontal
+2- desenhar o edificio
+so depois a teia
+
 
 Código
 
