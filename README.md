@@ -7,19 +7,9 @@
 
 1. Criar um clone do clássico Spider Man (https://www.free80sarcade.com/atari2600_SpiderMan.php) em Pygame
 
-2. Em alternativa... do clássico x em Pygame.
-
 ### Repositório de código
 
-1) Link para o repositório do GitHub: https://github.com/@author/xxx
-
-2) Adicionar, como colaborador com permissão de leitura (*role read*), o Prof. da prática:
-
-- https://github.com/AfonsoSalgadoSousa
-- https://github.com/jlopes60
-- https://github.com/nmacedo
-- https://github.com/rpmcruz
-- https://github.com/rcamacho
+1) Link para o repositório do GitHub: 
 
 ### Descrição
 
