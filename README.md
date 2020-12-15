@@ -13,9 +13,8 @@
 
 ### Descrição
 
-*---É um jogo em que o objetivo é acumular pontos (que se conseguede puzzle em que o objetivo do jogo é empurrar caixotes para um sítio indicado. 
-Para empurrar o caixote é preciso ir ao outro lado empurrá-lo. 
-Ou seja, se ele ficar junto à parede, a pessoa precisa de reiniciar o jogo. Estamos a utilizar os níveis do XSokoban.---*
+É um jogo em que o objetivo é acumular pontos (que se conseguem sempre que se toca em inimigos ou se passa um nível). Sempre que se
+passa um nível, começa-se outro só que um pouco mais difícil
 
 ### UI
 
