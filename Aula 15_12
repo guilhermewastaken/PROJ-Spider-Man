@@ -11,6 +11,7 @@ Se se puxar/esticar a teia a meio do movimento horizontal, este não é interrom
 Código
 
 import pygame
+import random
 
 screen_width = 
 screen_height = 
@@ -22,11 +23,13 @@ web_fire_right = False
 web_pull = False
 web_push = False
 
-
+timer = XXXX
 
 pygame.init()
 
 screen = pygame.display.set_mode((screen_width, screen_height))
+
+web_background =
 
 pygame.display.set_caption("Spider Man")
 
@@ -40,6 +43,21 @@ clock = pygame.time.Clock()
 running = True
 
 while running:
+    
+    #Vidas
+    if lifes = 3:
+        
+    if lifes = 2:
+        
+    if lifes = 0:
+        running = False
+
+
+    
+    
+    
+    timer pygame.time.get.ticks
+    
     for ev in pygame.event.get():
         if ev = pygame.QUIT():
             running = False
@@ -52,9 +70,23 @@ while running:
                 elif ev = pygame.K_RIGHT:
                     F
                     
-            elif ev = pygame.K_UP:
-                F
+            if ev = pygame.K_UP:
+                web_pull = True
             elif ev = pygame.K_DOWN:
-                F 
-                
+                web_push = True 
+    
+    if web_pull:
+        ff
+        web_pull = False
+    elif web_push:
+        xx
+        web_push = False
+    
+    
+    if goblin_x > XXXXXX:
+        goblin_x += goblin_speed
+    elif goblin_x < XXXXX:
+        goblin_x -= goblin_speed
+    
+    
 pygame.quit()
