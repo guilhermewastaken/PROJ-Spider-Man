@@ -24,7 +24,20 @@ vai ter que ser necessariamente muito grajnde
 so depois a teia
 
 
-Código
+Ideia para teia
+import pygame
+
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+pygame.init()
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+color = pygame.Color('white')
+pygame.draw.line(screen, color, (60,80),(130,100))
+pygame.display.flip()
+
+pygame.quit()
+
+Gerral
 
 import pygame
 import random
