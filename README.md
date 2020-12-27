@@ -5,7 +5,7 @@
 
 ### Objetivo
 
-Criar um clone do clássico Spider Man (https://www.free80sarcade.com/atari2600_SpiderMan.php) em Pygame
+Criar um clone do jogo [Spider Man](https://www.free80sarcade.com/atari2600_SpiderMan.php) da Atari 2600 em Pygame
 
 ### Descrição
 
