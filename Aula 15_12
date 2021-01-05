@@ -39,6 +39,8 @@ pygame.quit()
 
 Gerral
 
+def turn_false:
+    if x == "yes"
 import pygame
 
 SC_WIDTH = 800
@@ -160,13 +162,6 @@ while running:
     right_key = False
     left_key = False
     space_key = False
-#Draw line
-    
-    
-    
-    
-    
-    
     
     pygame.display.flip()
 pygame.quit()
