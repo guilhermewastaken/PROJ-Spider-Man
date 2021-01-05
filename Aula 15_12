@@ -40,82 +40,69 @@ pygame.quit()
 Gerral
 
 import pygame
-import random
 
-screen_width = 
-screen_height = 
-
-web_fire_up = False
-web_fire_left = False
-web_fire_right = False
-
-web_pull = False
-web_push = False
-
-timer = XXXX
+SC_WIDTH = 800
+SC_HEIGHT = 600
+left_mov = False
+right_mov = True
+up_mov = True
+down_mov = False
 
 pygame.init()
-
-screen = pygame.display.set_mode((screen_width, screen_height))
-
-web_background =
-
-pygame.display.set_caption("Spider Man")
-
-spiderman = pygame.image.load('')
-criminal = pygame.image.load('')
-goblin = pygame.image.load('')
-bomb_normal = pygame.image.load('')
-
+screen = pygame.display.set_mode((SC_WIDTH, SC_HEIGHT))
+pygame.display.set_caption('Spider Man Atari 2600')
 clock = pygame.time.Clock()
+spiderman = pygame.image.load('spiderman.png')
+
+x = SC_WIDTH/2 + spiderman.get_width()/2
+y = SC_HEIGHT/2 + spiderman.get_height()/2
 
 running = True
 
 while running:
-    
-    #Vidas
-    if lifes = 3:
-        
-    if lifes = 2:
-        
-    if lifes = 0:
-        running = False
-
-
-    
-    
-    
-    timer pygame.time.get.ticks
-    
     for ev in pygame.event.get():
-        if ev = pygame.QUIT():
+        if ev.type == pygame.QUIT:
             running = False
-        elif ev.type() = pygame.KEYDOWN:
-            if ev = pygame.K_SPACE:
-                if ev = pygame.K_UP:
-                    FFF
-                elif ev = pygame.K_LEFT:
-                    F
-                elif ev = pygame.K_RIGHT:
-                    F
-                    
-            if ev = pygame.K_UP:
-                web_pull = True
-            elif ev = pygame.K_DOWN:
-                web_push = True 
+        elif ev.type == pygame.KEYDOWN:
+            if ev.key == pygame.K_ESCAPE:
+                running = False
+            elif ev.key == pygame.K_LEFT:
+                left_mov = True
+            elif ev.key == pygame.K_RIGHT:
+                right_mov = True
+            elif ev.key == pygame.K_UP:
+                up_mov = True
+            elif ev.key == pygame.K_DOWN:
+                down_mov = True
+#Velocidade
+    v = 0.35
+    v_x = 0
+    v_y = 0
+    dt = clock.tick()
+    if up_mov:
+        v_y = -v * dt
+    if left_mov:
+        v_x = -v * dt
+    if down_mov:
+        v_y = v * dt
+    if right_mov:
+        v_x = v * dt
+        
+#Posição        
+    x = x + v_x
+    y = y + v_y
+
+    screen.fill('black')
+    screen.blit(spiderman, (x - int(spiderman.get_width()/2), y - int(spiderman.get_width()/2)))
     
-    if web_pull:
-        ff
-        web_pull = False
-    elif web_push:
-        xx
-        web_push = False
+#Draw line
     
     
-    if goblin_x > XXXXXX:
-        goblin_x += goblin_speed
-    elif goblin_x < XXXXX:
-        goblin_x -= goblin_speed
     
     
+    
+    
+    
+    
+    pygame.display.flip()
 pygame.quit()
