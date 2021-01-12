@@ -41,6 +41,7 @@ Gerral
 
 import pygame
 import math
+
 pygame.init()
 running = True
 
@@ -79,6 +80,7 @@ while running:
                 
             if ev.key == pygame.K_SPACE:
                 web_shooting = True
+                web_active = False
             if ev.key == pygame.K_LEFT:
                 left_key = True
             if ev.key == pygame.K_RIGHT:
@@ -108,11 +110,17 @@ while running:
             web_distance = 0
             if up_key:
                 shot_up = True
+                shot_right = False
+                shot_left = False
                 web_first_shot = False
             if right_key:
+                shot_up = False
                 shot_right = True
+                shot_left = False
                 web_first_shot = False
             if left_key:
+                shot_up = False
+                shot_right = False
                 shot_left = True
                 web_first_shot = False        
         if up_key and shot_up:
@@ -132,28 +140,47 @@ while running:
         
 #Movimento    
     if web_active:
+        web_first_shot = True
         #Swing
         if not shot_up:
-            swing_x = abs(origin[0]-anchor[0])
-            swing_y = math.sqrt(web_distance**2-swing_x**2)
-            if swing_x == swing_y:
-                if first_swing:
-                    first_swing = False
+            if first_swing:
+                web_hip = math.sqrt((web_distance**2)*2)
+            if up_key:
+                cos = abs(swing_x) / web_hip
+                sin = abs(updated_swing_y) / web_hip
+                y -= sin/10
+                if anchor[0] == origin[0]:
+                    pass
+                elif anchor[0]-origin[0] > 0:
+                    x -= cos/10
                 else:
-                    direction = direction * (-1)
-            if swing_x == 0:
-                y_direction * (-1)
-            if direction == 1:
-                swing_x += 1
-                x += 1
-            elif direction == -1:
-                swing_x -= 1
-                x -= 1
-            updated_swing_y = math.sqrt(web_distance**2-swing_x**2)
-            if y_direction == -1:
+                    x += cos/10
+                web_hip -= 1/10
+            elif down_key:
+                cos = abs(swing_x) / web_hip
+                sin = abs(updated_swing_y) / web_hip
+                y += sin/10
+                if anchor[0]-origin[0] > 0:
+                    x += cos/10
+                else:
+                    x = cos/10
+                web_hip -= 1/10
+            else:
+                swing_x = abs(abs(origin[0])-abs(anchor[0]))
+                swing_y = abs(abs(origin[1])-abs(anchor[1]))
+                if swing_x == swing_y:
+                    if first_swing:
+                        first_swing = False
+                    else:
+                        direction = direction * (-1)
+                if direction == 1:
+                    x += 0.125
+                elif direction == -1:
+                    x -= 0.125
+                origin = (x-29,y-40)
+                swing_x = abs(abs(origin[0])-abs(anchor[0]))            
+                updated_swing_y = math.sqrt(web_hip**2-swing_x**2)
                 y -= swing_y - updated_swing_y
-            elif y_direction == 1:
-                y += swing_y - updated_swing_y
         
         #Movement
         if origin == anchor:
@@ -163,18 +190,6 @@ while running:
                 y -= 1                
             elif down_key:
                 y += 1
-        # else:
-        #     if up_key:
-                
-        #     elif down_key
-            
-        if origin == anchor:
-            web_active = False
-    #     if up_key:
-        
-    #     elif down_key
-
-
 
     screen.fill("black")
     if web_active or web_shooting:
