@@ -39,48 +39,46 @@ pygame.quit()
 
 Gerral
 
-def turn_false:
-    if x == "yes"
 import pygame
+import math
+pygame.init()
+running = True
 
-SC_WIDTH = 800
-SC_HEIGHT = 600
-left_mov = False
-right_mov = False
-up_mov = False
-down_mov = False
+#Background and window
+screen_width = 800
+screen_heigth = 600
+screen = pygame.display.set_mode((screen_width, screen_heigth))
+pygame.display.set_caption('Spider Man Atari 2600')
+
+#Spiderman
+spiderman = pygame.image.load('Images/spiderman.png')
+x = screen_width/2 + spiderman.get_width()/2
+y = screen_heigth/2 + spiderman.get_height()/2
+web_shooting = False
+web_active = False
+web_first_shot = True
+shot_up = False
+shot_right = False
+shot_left = False
+
 up_key = False
 down_key = False
 right_key = False
 left_key = False
-space_key = False
 
-pygame.init()
-screen = pygame.display.set_mode((SC_WIDTH, SC_HEIGHT))
-pygame.display.set_caption('Spider Man Atari 2600')
-clock = pygame.time.Clock()
-spiderman = pygame.image.load('images/spiderman.png')
-
-x = SC_WIDTH/2 + spiderman.get_width()/2
-y = SC_HEIGHT/2 + spiderman.get_height()/2
-
-running = True
-
-web_up = False
-web_left = False
-web_right = False
-web_distance = 0
+y_direction = -1
 
 while running:
-    
-
-    
     for ev in pygame.event.get():
         if ev.type == pygame.QUIT:
             running = False
+        
         elif ev.type == pygame.KEYDOWN:
             if ev.key == pygame.K_ESCAPE:
                 running = False
+                
+            if ev.key == pygame.K_SPACE:
+                web_shooting = True
             if ev.key == pygame.K_LEFT:
                 left_key = True
             if ev.key == pygame.K_RIGHT:
@@ -89,79 +87,99 @@ while running:
                 up_key = True
             if ev.key == pygame.K_DOWN:
                 down_key = True
-            if ev.key == pygame.K_SPACE:
-                space_key = True
-            
-#Velocidade
-    if space_key and up_key:
-        web_up = True
-    elif space_key and right_key:
-        turn_false = (web_up,web_left)
-        web_right = True
-    elif space_key and left_key:
-        web_left = True
-    elif up_key:
-        up_mov = True
-    elif down_key:
-        down_mov = True
-    elif right_key:
-        right_mov = True
-    elif left_key:
-        left_mov = True
-
-
-    v = 3
-    v_x = 0
-    v_y = 0
-    dt = clock.tick()
-    if up_mov:
-        v_y = -v * dt
-    if left_mov:
-        v_x = -v * dt
-    if down_mov:
-        v_y = v * dt
-    if right_mov:
-        v_x = v * dt
         
-#Posição        
-    x = x + v_x
-    y = y + v_y
+        elif ev.type == pygame.KEYUP:
+            if ev.key == pygame.K_SPACE:
+                web_shooting = False
+                web_active = True                
+            if ev.key == pygame.K_LEFT:
+                left_key = False
+            if ev.key == pygame.K_RIGHT:
+                right_key = False
+            if ev.key == pygame.K_UP:
+                up_key = False
+            if ev.key == pygame.K_DOWN:
+                down_key = False
+                
+#Disparo da teia    
+    if web_shooting:
+        if web_first_shot:
+            anchor = (x-29,y-40)
+            web_distance = 0
+            if up_key:
+                shot_up = True
+                web_first_shot = False
+            if right_key:
+                shot_right = True
+                web_first_shot = False
+            if left_key:
+                shot_left = True
+                web_first_shot = False        
+        if up_key and shot_up:
+            web_distance += 1               
+            anchor = (x-29, y -40- web_distance)
+        if right_key and shot_right:
+            direction = 1
+            web_distance += 1               
+            anchor = (x-29 + web_distance, y -40- web_distance)
+        if left_key and shot_left:
+            direction = -1
+            web_distance += 1               
+            anchor = (x-29-web_distance, y -40- web_distance)        
+        if web_distance > 150:
+            web_distance = 150
+        first_swing = True
+        
+#Movimento    
+    if web_active:
+        #Swing
+        if not shot_up:
+            swing_x = abs(origin[0]-anchor[0])
+            swing_y = math.sqrt(web_distance**2-swing_x**2)
+            if swing_x == swing_y:
+                if first_swing:
+                    first_swing = False
+                else:
+                    direction = direction * (-1)
+            if swing_x == 0:
+                y_direction * (-1)
+            if direction == 1:
+                swing_x += 1
+                x += 1
+            elif direction == -1:
+                swing_x -= 1
+                x -= 1
+            updated_swing_y = math.sqrt(web_distance**2-swing_x**2)
+            if y_direction == -1:
+                y -= swing_y - updated_swing_y
+            elif y_direction == 1:
+                y += swing_y - updated_swing_y
+        
+        #Movement
+        if origin == anchor:
+            web_active = False
+        if shot_up:
+            if up_key:
+                y -= 1                
+            elif down_key:
+                y += 1
+        # else:
+        #     if up_key:
+                
+        #     elif down_key
+            
+        if origin == anchor:
+            web_active = False
+    #     if up_key:
+        
+    #     elif down_key
+
+
 
     screen.fill("black")
+    if web_active or web_shooting:
+        origin = (x-29,y-40)
+        pygame.draw.line(screen,(255,255,255),origin,anchor,5)
     screen.blit(spiderman, (x - int(spiderman.get_width()/2), y - int(spiderman.get_width()/2)))
-    if web_up:
-        web_distance = 10               
-        anchor = (x-29, y -40- web_distance)
-        pygame.draw.line(screen,(255,255,255),(x-29,y-40),anchor,5)
-        pygame.display.flip()
-    else:
-        web_distance = 0
-    
-    if web_right:
-        web_distance = 10               
-        anchor = (x-29 + web_distance, y -40- web_distance)
-        pygame.draw.line(screen,(255,255,255),(x-29,y-40),anchor,5)
-        pygame.display.flip()
-    else:
-        web_distance = 0
-    
-    if web_left:
-        web_distance = 10               
-        anchor = (x-29-web_distance, y -40- web_distance)
-        pygame.draw.line(screen,(255,255,255),(x-29,y-40),anchor,5)
-        pygame.display.flip()
-    else:
-        web_distance = 0
-
-    left_mov = False
-    right_mov = False
-    up_mov = False
-    down_mov = False
-    up_key = False
-    down_key = False
-    right_key = False
-    left_key = False
-    space_key = False
-    
     pygame.display.flip()
 pygame.quit()
