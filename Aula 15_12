@@ -23,41 +23,32 @@ vai ter que ser necessariamente muito grajnde
 2- desenhar o edificio
 so depois a teia
 
-
-Ideia para teia
-import pygame
-
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-pygame.init()
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-color = pygame.Color('white')
-pygame.draw.line(screen, color, (60,80),(130,100))
-pygame.display.flip()
-
-pygame.quit()
-
-Gerral
-
 import pygame
 import math
+
+def distance(x1,y1,x2,y2):
+    return math.sqrt((x2-x1)**2 + (y2-y1)**2)
+
 
 pygame.init()
 running = True
 
-#Background and window
+#Background and sprites
 screen_width = 800
 screen_heigth = 600
 screen = pygame.display.set_mode((screen_width, screen_heigth))
 pygame.display.set_caption('Spider Man Atari 2600')
-
-#Spiderman
 spiderman = pygame.image.load('Images/spiderman.png')
+spd_right = pygame.image.load('Images/swing_right.png')
+spd_left = pygame.image.load('Images/swing_left.png')
+# goblin = pygame.image.load('Images/goblin.png')
+
 x = screen_width/2 + spiderman.get_width()/2
 y = screen_heigth/2 + spiderman.get_height()/2
 web_shooting = False
 web_active = False
 web_first_shot = True
+
 shot_up = False
 shot_right = False
 shot_left = False
@@ -68,6 +59,59 @@ right_key = False
 left_key = False
 
 y_direction = -1
+
+level = (
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    # visible at the beginning
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 2, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 2, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 2, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 2, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 2, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 2, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 3, 3, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 3, 3, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 1, 0, 1, 1, 0, 1, 0, 3, 3, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+)
+obj_color = ('black', 'blue', 'red', 'yellow')
+scroll_y = len(level) - (600//40)
+
+def level2screen(row, col):  # -> (x, y)
+    return col*40, (row-scroll_y)*40
+
+def screen2level(x, y):  # -> (row, col)
+    return y/40+scroll_y, x/40
 
 while running:
     for ev in pygame.event.get():
@@ -102,12 +146,13 @@ while running:
                 up_key = False
             if ev.key == pygame.K_DOWN:
                 down_key = False
-                
-#Disparo da teia    
+
+    # Disparo da teia    
     if web_shooting:
         if web_first_shot:
             anchor = (x-29,y-40)
             web_distance = 0
+            first_swing = True
             if up_key:
                 shot_up = True
                 shot_right = False
@@ -122,23 +167,22 @@ while running:
                 shot_up = False
                 shot_right = False
                 shot_left = True
-                web_first_shot = False        
-        if up_key and shot_up:
-            web_distance += 1               
-            anchor = (x-29, y -40- web_distance)
-        if right_key and shot_right:
-            direction = 1
-            web_distance += 1               
-            anchor = (x-29 + web_distance, y -40- web_distance)
-        if left_key and shot_left:
-            direction = -1
-            web_distance += 1               
-            anchor = (x-29-web_distance, y -40- web_distance)        
-        if web_distance > 150:
-            web_distance = 150
-        first_swing = True
-        
-#Movimento    
+                web_first_shot = False
+                
+        if web_distance < 150:
+            if up_key and shot_up:
+                web_distance += 1               
+                anchor = (x-29, y -40- web_distance)
+            elif right_key and shot_right:
+                direction = 1
+                web_distance += 1               
+                anchor = (x-29 + web_distance, y -40- web_distance)
+            elif left_key and shot_left:
+                direction = -1
+                web_distance += 1               
+                anchor = (x-29-web_distance, y -40- web_distance)        
+
+    # Movimento    
     if web_active:
         web_first_shot = True
         #Swing
@@ -147,43 +191,50 @@ while running:
                 web_hip = math.sqrt((web_distance**2)*2)
             if up_key:
                 cos = abs(swing_x) / web_hip
-                sin = abs(updated_swing_y) / web_hip
-                y -= sin/10
+                sin = abs(swing_y) / web_hip
                 if anchor[0] == origin[0]:
-                    pass
-                elif anchor[0]-origin[0] > 0:
-                    x -= cos/10
+                    y -= 1/5
+                elif origin[0] - anchor[0] > 0:
+                    x -= cos
+                    y -= sin
                 else:
-                    x += cos/10
-                web_hip -= 1/10
+                    x += cos
+                    y -= sin
+                web_hip -= 1
             elif down_key:
                 cos = abs(swing_x) / web_hip
-                sin = abs(updated_swing_y) / web_hip
-                y += sin/10
-                if anchor[0]-origin[0] > 0:
-                    x += cos/10
+                sin = abs(swing_y) / web_hip
+                if anchor[0] == origin[0]:
+                    y += 1/5
+                elif origin[0] - anchor[0] > 0:
+                    x += cos
+                    y += sin
                 else:
-                    x = cos/10
-                web_hip -= 1/10
+                    x -= cos
+                    y += sin
+                web_hip += 1
             else:
-                swing_x = abs(abs(origin[0])-abs(anchor[0]))
-                swing_y = abs(abs(origin[1])-abs(anchor[1]))
-                if swing_x == swing_y:
+                origin = (x-29,y-40)
+                swing_x = abs(origin[0]-anchor[0])
+                swing_y = abs(origin[1]-anchor[1])
+                if swing_x >= swing_y and \
+                    ((direction == 1 and origin[0] > anchor[0]) or \
+                    (direction == -1 and origin[0] < anchor[0])):
                     if first_swing:
                         first_swing = False
                     else:
                         direction = direction * (-1)
                 if direction == 1:
-                    x += 0.125
+                    x += 0.25
                 elif direction == -1:
-                    x -= 0.125
+                    x -= 0.25
                 origin = (x-29,y-40)
-                swing_x = abs(abs(origin[0])-abs(anchor[0]))            
-                updated_swing_y = math.sqrt(web_hip**2-swing_x**2)
-                y -= swing_y - updated_swing_y
+                swing_x = abs(origin[0]-anchor[0])  
+                y += math.sqrt(web_hip**2-swing_x**2) - swing_y
+                swing_y = math.sqrt(web_hip**2-swing_x**2)
         
-        #Movement
-        if origin == anchor:
+        # Movement
+        if origin[1] <= anchor[1]:
             web_active = False
         if shot_up:
             if up_key:
@@ -191,10 +242,23 @@ while running:
             elif down_key:
                 y += 1
 
-    screen.fill("black")
+    # Draw
+    screen.fill('black')
+    for row in range(len(level)):
+        for col in range(len(level[0])):
+            color = obj_color[level[row][col]]
+            rect = (*level2screen(row, col), 40, 40)
+            pygame.draw.rect(screen, color, rect)
+    
     if web_active or web_shooting:
         origin = (x-29,y-40)
         pygame.draw.line(screen,(255,255,255),origin,anchor,5)
-    screen.blit(spiderman, (x - int(spiderman.get_width()/2), y - int(spiderman.get_width()/2)))
+    if web_active:
+        if origin[0] - anchor[0] >= 0:
+            screen.blit(spd_left,(x - int(spiderman.get_width()/2), y - int(spiderman.get_width()/2)))
+        else:
+            screen.blit(spd_right,(x - int(spiderman.get_width()/2), y - int(spiderman.get_width()/2)))
+    else:
+        screen.blit(spiderman, (x - int(spiderman.get_width()/2), y - int(spiderman.get_width()/2)))
     pygame.display.flip()
 pygame.quit()
