@@ -1,33 +1,7 @@
-Movimentos do Spider Man e da teia:
-1- Disparar: carregar no espaço e depois nas teclas up, left ou right
-Em left ou em right a teia é disparada a 45 graus (https://prnt.sc/w2eg60)
-2- Lançar-se: se tiver usado a teia na diagonal o spider man começa automaticamente a mover-se como um pendulo. Não dá para controlar a direção.
-Os pontos mais altos ficam onde a teia fizer 45 graus
-3- Puxar: Carregando em up ou down a teia encolhe-se ou extende-se (de forma rígida).
-Há um limite para o comprimento da teia (o mesmo do alcance de quando a dispara).
-Se se puxar/esticar a teia a meio do movimento horizontal, este não é interrompido. A teia aumenta ou diminui simultaneamente.
-
-OI eixo do y e negtivo
-
-Variável de atirar teia ou nao (ativada na tecla de space)
-guardar posicao inicial da teia(com o jogador)
-teia= distancia no x, distancia no y, direcao :left right, up
-A cada ciclo aaumenta-se a teia na direcao certa 0.001 nos dois eixos
-
-edificoi
-matriz em que será 1 se tiver parede, 0 se nao[1111100011111000011100000
-vai ter que ser necessariamente muito grajnde
-
-
-1- desenhar jogador e dar-lhe ,movimento na horizontal
-2- desenhar o edificio
-so depois a teia
-
 import pygame
 import math
 
-def distance(x1,y1,x2,y2):
-    return math.sqrt((x2-x1)**2 + (y2-y1)**2)
+from simple_functions import distance
 
 
 pygame.init()
@@ -83,28 +57,32 @@ level = (
     (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
     (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
     # visible at the beginning
-    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 2, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 2, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 2, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 2, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 2, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 2, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 0, 3, 3, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 0, 3, 3, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
-    (0, 1, 0, 1, 1, 0, 1, 0, 3, 3, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 0, 0, 1, 1, 2, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 0, 0, 1, 1, 0, 1, 2, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 0, 0, 1, 1, 2, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+    (0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1),
+#
+    (0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0),
+    (0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0),
+    (0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0),#base v
+#    
+    (0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0),
+    (0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0),
+    (0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0),
+    (0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0),
+    (0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0),
 )
-obj_color = ('black', 'blue', 'red', 'yellow')
+col_sky = pygame.Color(56,146,215)
+build_sky = pygame.Color(232,216,73)
+obj_color = (col_sky, build_sky, 'red', 'yellow')
 scroll_y = len(level) - (600//40)
 
 def level2screen(row, col):  # -> (x, y)
