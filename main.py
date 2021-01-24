@@ -1,12 +1,13 @@
 import math
+import random
 import pygame
 from background import *
 
 pygame.init()
 
 #Window settings
-screen_width = 800
-screen_heigth = 600
+screen_width = 792
+screen_heigth = 576
 screen = pygame.display.set_mode((screen_width, screen_heigth))
 pygame.display.set_caption('Spider Man Atari 2600')
 
@@ -14,11 +15,17 @@ pygame.display.set_caption('Spider Man Atari 2600')
 spiderman = pygame.image.load('Images/spiderman.png')
 spd_right = pygame.image.load('Images/swing_right.png')
 spd_left = pygame.image.load('Images/swing_left.png')
-# goblin = pygame.image.load('Images/goblin.png')
+spd_fall = pygame.image.load('Images/falling.png')
+life = pygame.image.load('Images/life.png')
+
+goblin = pygame.image.load('Images/goblin.png')
+bomb = pygame.image.load('Images/bomb.png')
+criminal = pygame.image.load('Images/criminal.png')
 
 #Initial conditions
 x = screen_width/2 + spiderman.get_width()/2
 y = screen_heigth/2 + spiderman.get_height()/2
+lives = 3
 
 #Keys
 up_key = False
@@ -37,17 +44,52 @@ web_active = False
 #Colours
 col_sky = pygame.Color(56,146,215)
 build_sky = pygame.Color(232,216,73)
+obj_color = (col_sky, build_sky)
 
 #Background
-col_sky = pygame.Color(56,146,215)
-build_sky = pygame.Color(232,216,73)
-obj_color = (col_sky, build_sky)
-# scroll = len(level) - (600//25)
+scroll = len(level) - (screen_heigth//12)
+
+def level_to_screen(row, col):  # -> (x, y)
+    return col*12, (row-scroll)*12
+
+def screen_to_level(x, y):  # -> (row, col)
+    return y/12+scroll,x/12
+
+#def collision(r1, r2):
+#    ...
 
 
+# https://stackoverflow.com/questions/3838329/how-can-i-check-if-two-segments-intersect
+# Return true if line segments AB and CD intersect
+def intersect(A,B,C,D):
+    return ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D)
+def ccw(A,B,C):
+    return (C[1]-A[1]) * (B[0]-A[0]) > (B[1]-A[1]) * (C[0]-A[0])
 
+#Dead?
+clock = pygame.time.Clock()
+falling = False
 running = True
+
+ENEMY_WIDTH = 24
+ENEMY_HEIGHT = 36
+enemies_cols = [0]*len(enemies_rows)
+enemies_times = [0]*len(enemies_rows)
+
 while running:
+    ########## Events #########
+    dt = clock.tick(60)
+
+    if lives == 0:
+        running = False
+    if y > screen_heigth:
+        lives -= 1
+        x = screen_width/2 + spiderman.get_width()/2
+        y = screen_heigth/2 + spiderman.get_height()/2
+        falling = False
+        web_active = False
+        web_shooting = False
+    
     for ev in pygame.event.get():
         
         if ev.type == pygame.QUIT:
@@ -81,6 +123,15 @@ while running:
                 up_key = False
             if ev.key == pygame.K_DOWN:
                 down_key = False
+
+    ########## Updates #########
+    
+    # update enemy positions
+    enemies_times = [t-dt for t in enemies_times]
+    for i, t in enumerate(enemies_times):
+        if t <= 0:
+            enemies_cols[i] = random.choice([i*6+10 for i in range(8)])
+            enemies_times[i] = random.randint(1000, 2000)
     
     if web_shooting:
         if web_distance == 0:
@@ -112,78 +163,144 @@ while running:
                 anchor = (x-29-web_distance, y -40- web_distance)
                 
     if web_active:
-        if web_distance != 0:
-            if shot_up:
-                web_hptn = web_distance
-            else:
-                web_hptn = math.sqrt(2*web_distance**2)
-            web_distance = 0
-        
-        
-        
-        
-        if origin[1] <= anchor[1]:
-            web_distance = 0
+        falling = False
+        temp = screen_to_level(anchor[0],anchor[1])        
+        if level[int(temp[0])][int(temp[1])] == 0:
             web_active = False
+            falling = True
+            web_distance = 0
         
-        if shot_up:
-            if up_key:
-                y -= 1
-                web_distance -= 1                
-            elif down_key and web_hptn < 150:
-                y += 1
-                web_hptn += 1
-            
         else:
-            swing_x = abs(origin[0]-anchor[0])
-            swing_y = abs(origin[1]-anchor[1])
             if web_distance != 0:
-                web_hptn = math.sqrt(2*web_distance**2)
+                if shot_up:
+                    web_hptn = web_distance
+                else:
+                    web_hptn = math.sqrt(2*web_distance**2)
                 web_distance = 0
             
-            if up_key:
-                cos = swing_x / web_hptn
-                sin = swing_y / web_hptn
-                y -= sin
-                if origin[0] - anchor[0] > 0:
-                    x -= cos
-                else:
-                    x += cos
-                web_hptn -= math.sqrt(sin**2+cos**2)
-            elif down_key and web_hptn < 150:
-                cos = swing_x / web_hptn
-                sin = swing_y / web_hptn
-                y += sin
-                if origin[0] - anchor[0] > 0:
-                    x -= cos
-                else:
-                    x += cos
-                web_hptn += math.sqrt(sin**2+cos**2)
+            if origin[1] <= anchor[1]:
+                web_distance = 0
+                web_active = False
+            
+            if shot_up:
+                if up_key:
+                    y -= 1
+                    web_distance -= 1                
+                elif down_key and web_hptn < 150:
+                    y += 1
+                    web_hptn += 1
+                
             else:
-                if swing_x >= swing_y and \
-                    ((direction == 1 and origin[0] > anchor[0]) or \
-                    (direction == -1 and origin[0] < anchor[0])):                    
-                    direction = direction * (-1)
-                if direction == 1:
-                    x += 0.25
-                elif direction == -1:
-                    x -= 0.25
-                origin = (x-29,y-40)
-                swing_x = abs(origin[0]-anchor[0])  
-                y += math.sqrt(web_hptn**2-swing_x**2) - swing_y
+                swing_x = abs(origin[0]-anchor[0])
+                swing_y = abs(origin[1]-anchor[1])
+                if web_distance != 0:
+                    web_hptn = math.sqrt(2*web_distance**2)
+                    web_distance = 0
+                
+                if up_key:
+                    cos = swing_x / web_hptn
+                    sin = swing_y / web_hptn
+                    y -= sin
+                    if origin[0] - anchor[0] > 0:
+                        x -= cos
+                    else:
+                        x += cos
+                    web_hptn -= math.sqrt(sin**2+cos**2)
+                elif down_key and web_hptn < 150:
+                    cos = swing_x / web_hptn
+                    sin = swing_y / web_hptn
+                    y += sin
+                    if origin[0] - anchor[0] > 0:
+                        x -= cos
+                    else:
+                        x += cos
+                    web_hptn += math.sqrt(sin**2+cos**2)
+                else:
+                    if swing_x >= swing_y and \
+                        ((direction == 1 and origin[0] > anchor[0]) or \
+                        (direction == -1 and origin[0] < anchor[0])):                    
+                        direction = direction * (-1)
+                    if direction == 1:
+                        x += 0.25
+                    elif direction == -1:
+                        x -= 0.25
+                    origin = (x-29,y-40)
+                    swing_x = abs(origin[0]-anchor[0])  
+                    y += math.sqrt(web_hptn**2-swing_x**2) - swing_y
     
-    #Draw
-    screen.fill('black')            
+    # Background (scroll)
+    while y > screen_heigth/3:
+        if scroll >= len(level) - (screen_heigth//12):
+            break
+        scroll += 1
+        y -= 12
+        if web_active:
+            anchor = (anchor[0],anchor[1]-12)
+    while y < screen_heigth/2:
+        if scroll <= 0:
+            break
+        scroll -= 1
+        y += 12
+        if web_active:
+            anchor = (anchor[0],anchor[1]+12) 
+
     if web_active or web_shooting:
         origin = (x-29,y-40)
-        pygame.draw.line(screen,(255,255,255),origin,anchor,5)
-    if web_active:
+
+    ########## Collisions #########
+    
+    # collision between web and enemy
+    if web_shooting or web_active:
+        for enemy_row, enemy_col in zip(enemies_rows, enemies_cols):
+            ex, ey = level_to_screen(enemy_row, enemy_col)
+            ey -= ENEMY_HEIGHT
+            if intersect(origin, anchor, (ex, ey), (ex+ENEMY_WIDTH, ey)) or \
+                intersect(origin, anchor, (ex+ENEMY_WIDTH, ey), (ex+ENEMY_WIDTH, ey+ENEMY_HEIGHT)) or \
+                intersect(origin, anchor, (ex, ey+ENEMY_HEIGHT), (ex+ENEMY_WIDTH, ey+ENEMY_HEIGHT)) or \
+                intersect(origin, anchor, (ex, ey), (ex, ey+ENEMY_HEIGHT)):
+                    web_active = False
+                    falling = True
+                    web_distance = 0            
+
+    # collision between player and enemy
+    for enemy_row, enemy_col in zip(enemies_rows, enemies_cols):
+        ex, ey = level_to_screen(enemy_row, enemy_col)
+        ey -= ENEMY_HEIGHT
+        # x, y - jogador
+        #if(collision((x, y, PLAYER_WIDTH, PLAYER_HEIGHT), (ex, ey, ENEMY_WIDTH, ENEMY_HEIGHT))):
+        #    todo
+
+    ########## Draw #########
+    screen.fill('black')
+    
+    for row in range(len(level)):
+        for col in range(len(level[0])):
+            color = obj_color[level[row][col]]
+            rect = (*level_to_screen(row, col), 12, 12)
+            pygame.draw.rect(screen, color, rect)
+    for enemy_row, enemy_col in zip(enemies_rows, enemies_cols):
+        ex, ey = level_to_screen(enemy_row, enemy_col)
+        ey -= ENEMY_HEIGHT
+        pygame.draw.rect(screen, 'brown', (ex, ey, ENEMY_WIDTH, ENEMY_HEIGHT))
+    if web_active or web_shooting:
+        pygame.draw.line(screen,(255,255,255),origin,anchor,5)        
+    if web_active:        
         if origin[0] - anchor[0] >= 0:
             screen.blit(spd_left,(x - int(spiderman.get_width()/2), y - int(spiderman.get_width()/2)))
         else:
             screen.blit(spd_right,(x - int(spiderman.get_width()/2), y - int(spiderman.get_width()/2)))
+    elif falling:
+        y += 3
+        screen.blit(spd_fall, (x - int(spiderman.get_width()/2), y - int(spiderman.get_width()/2)))
     else:
         screen.blit(spiderman, (x - int(spiderman.get_width()/2), y - int(spiderman.get_width()/2)))
+    
+    if lives == 3:
+        screen.blit(life, (50,500))
+        screen.blit(life, (15,500))
+    elif lives == 2:
+        screen.blit(life, x, y)
     pygame.display.flip()
-        
+    
+    
 pygame.quit()
