@@ -27,8 +27,6 @@ base = (
     )
 
 level = 8*window_row + base
-#print(len(base[2]))
-#print(len(level))
 
 enemies_rows = (0, 1, 2, 3)  # coordenas em termos de andares
-enemies_rows = tuple(len(level)-14-r*8 for r in enemies_rows)  # coordenadas do nivel
+enemies_rows = [len(level)-14-r*8 for r in enemies_rows]  # coordenadas do nivel

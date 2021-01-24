@@ -12,9 +12,9 @@ screen = pygame.display.set_mode((screen_width, screen_heigth))
 pygame.display.set_caption('Spider Man Atari 2600')
 
 #Sprites
-spiderman = pygame.image.load('Images/spiderman.png')
-spd_right = pygame.image.load('Images/swing_right.png')
-spd_left = pygame.image.load('Images/swing_left.png')
+spiderman = pygame.image.load('Images/spiderman2.png')
+spd_right = pygame.image.load('Images/swing_right2.png')
+spd_left = pygame.image.load('Images/swing_left2.png')
 spd_fall = pygame.image.load('Images/falling.png')
 life = pygame.image.load('Images/life.png')
 
@@ -49,14 +49,31 @@ obj_color = (col_sky, build_sky)
 #Background
 scroll = len(level) - (screen_heigth//12)
 
+def collision(spd,crm):
+    max_x = math.ceil(spd[1]+spd[3])
+    min_x = int(spd[0]-spd[2])
+    max_y = math.ceil(spd[0]+spd[2])    
+    min_y = int(spd[1]-spd[3])
+    spd_hitbox = [set(range(min_x, max_x+1)), set(range(min_y, max_y+1))]    
+    
+    max_x = math.ceil(crm[1]+crm[3])
+    min_x = int(crm[0]-crm[2])
+    max_y = math.ceil(crm[0]+crm[2])
+    min_y = int(crm[1]-crm[3])
+    crm_hitbox = [set(range(min_x, max_x+1)), set(range(min_y, max_y+1))]
+    col = []
+    col.append(spd_hitbox[0].intersection(crm_hitbox[0]))
+    col.append(spd_hitbox[1].intersection(crm_hitbox[1]))
+    if len(col[0]) != 0 and len(col[1]) != 0:
+        return True
+    return False
+
 def level_to_screen(row, col):  # -> (x, y)
     return col*12, (row-scroll)*12
 
 def screen_to_level(x, y):  # -> (row, col)
     return y/12+scroll,x/12
 
-#def collision(r1, r2):
-#    ...
 
 
 # https://stackoverflow.com/questions/3838329/how-can-i-check-if-two-segments-intersect
@@ -127,6 +144,7 @@ while running:
     ########## Updates #########
     
     # update enemy positions
+    
     enemies_times = [t-dt for t in enemies_times]
     for i, t in enumerate(enemies_times):
         if t <= 0:
@@ -135,7 +153,7 @@ while running:
     
     if web_shooting:
         if web_distance == 0:
-            anchor = (x-29,y-40)
+            anchor = (x-20,y-30)
             if up_key:
                 shot_up = True
                 shot_right = False
@@ -152,15 +170,15 @@ while running:
         if web_distance < 150:
             if up_key and shot_up:
                 web_distance += 1               
-                anchor = (x-29, y -40- web_distance)
+                anchor = (x-20, y -30- web_distance)
             elif right_key and shot_right:
                 direction = 1
                 web_distance += 1               
-                anchor = (x-29 + web_distance, y -40- web_distance)
+                anchor = (x-20 + web_distance, y -30- web_distance)
             elif left_key and shot_left:
                 direction = -1
                 web_distance += 1               
-                anchor = (x-29-web_distance, y -40- web_distance)
+                anchor = (x-20-web_distance, y -30- web_distance)
                 
     if web_active:
         falling = False
@@ -224,10 +242,12 @@ while running:
                         x += 0.25
                     elif direction == -1:
                         x -= 0.25
-                    origin = (x-29,y-40)
+                    origin = (x-20,y-40)
                     swing_x = abs(origin[0]-anchor[0])  
                     y += math.sqrt(web_hptn**2-swing_x**2) - swing_y
-    
+    if falling:
+        y += 3
+        
     # Background (scroll)
     while y > screen_heigth/3:
         if scroll >= len(level) - (screen_heigth//12):
@@ -245,7 +265,7 @@ while running:
             anchor = (anchor[0],anchor[1]+12) 
 
     if web_active or web_shooting:
-        origin = (x-29,y-40)
+        origin = (x-20,y-30)
 
     ########## Collisions #########
     
@@ -267,8 +287,12 @@ while running:
         ex, ey = level_to_screen(enemy_row, enemy_col)
         ey -= ENEMY_HEIGHT
         # x, y - jogador
-        #if(collision((x, y, PLAYER_WIDTH, PLAYER_HEIGHT), (ex, ey, ENEMY_WIDTH, ENEMY_HEIGHT))):
-        #    todo
+        spd_width = spiderman.get_width()
+        spd_height = spiderman.get_height()
+        if(collision((x, y, spd_width/2, spd_height/2), (ex, ey, ENEMY_WIDTH/2, ENEMY_HEIGHT/2))):
+            enemies.rows.remove(screen_to_level(ex))
+            enemies.cols.remove(screen_to_level(ey + ENEMY_HEIGHT))
+            
 
     ########## Draw #########
     screen.fill('black')
@@ -278,29 +302,30 @@ while running:
             color = obj_color[level[row][col]]
             rect = (*level_to_screen(row, col), 12, 12)
             pygame.draw.rect(screen, color, rect)
+    
     for enemy_row, enemy_col in zip(enemies_rows, enemies_cols):
         ex, ey = level_to_screen(enemy_row, enemy_col)
         ey -= ENEMY_HEIGHT
-        pygame.draw.rect(screen, 'brown', (ex, ey, ENEMY_WIDTH, ENEMY_HEIGHT))
+        # pygame.draw.rect(screen, 'brown', (ex, ey, ENEMY_WIDTH, ENEMY_HEIGHT))
+        screen.blit(criminal,(ex-12,ey-13))
+    
     if web_active or web_shooting:
-        pygame.draw.line(screen,(255,255,255),origin,anchor,5)        
+        pygame.draw.line(  screen,(255,255,255),origin,anchor,5)        
     if web_active:        
         if origin[0] - anchor[0] >= 0:
             screen.blit(spd_left,(x - int(spiderman.get_width()/2), y - int(spiderman.get_width()/2)))
         else:
             screen.blit(spd_right,(x - int(spiderman.get_width()/2), y - int(spiderman.get_width()/2)))
     elif falling:
-        y += 3
         screen.blit(spd_fall, (x - int(spiderman.get_width()/2), y - int(spiderman.get_width()/2)))
     else:
         screen.blit(spiderman, (x - int(spiderman.get_width()/2), y - int(spiderman.get_width()/2)))
     
     if lives == 3:
-        screen.blit(life, (50,500))
-        screen.blit(life, (15,500))
+        screen.blit(life, (35,538))
+        screen.blit(life, (0,538))
     elif lives == 2:
-        screen.blit(life, x, y)
+        screen.blit(life, (0,538))
     pygame.display.flip()
-    
-    
+        
 pygame.quit()
