@@ -283,15 +283,16 @@ while running:
                     web_distance = 0            
 
     # collision between player and enemy
-    for enemy_row, enemy_col in zip(enemies_rows, enemies_cols):
-        ex, ey = level_to_screen(enemy_row, enemy_col)
+    for i in range(len(enemies_rows)):
+        ex, ey = level_to_screen(enemies_rows[i], enemies_cols[i])
         ey -= ENEMY_HEIGHT
         # x, y - jogador
         spd_width = spiderman.get_width()
         spd_height = spiderman.get_height()
-        if(collision((x, y, spd_width/2, spd_height/2), (ex, ey, ENEMY_WIDTH/2, ENEMY_HEIGHT/2))):
-            enemies.rows.remove(screen_to_level(ex))
-            enemies.cols.remove(screen_to_level(ey + ENEMY_HEIGHT))
+        if collision((x, y, spd_width/2, spd_height/2), (ex, ey, ENEMY_WIDTH/2, ENEMY_HEIGHT/2)):
+            del enemies_rows[i]
+            del enemies_cols[i]
+            del enemies_times[i]
             
 
     ########## Draw #########
