@@ -234,9 +234,9 @@ while running:
                         (direction == -1 and origin[0] < anchor[0])):                    
                         direction = direction * (-1)
                     if direction == 1:
-                        x += 0.25
+                        x += 0.5
                     elif direction == -1:
-                        x -= 0.25
+                        x -= 0.5
                     origin = (x-20,y-40)
                     swing_x = abs(origin[0]-anchor[0])  
                     y += math.sqrt(web_hptn**2-swing_x**2) - swing_y
