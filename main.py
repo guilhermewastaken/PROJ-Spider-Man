@@ -48,18 +48,16 @@ obj_color = (col_sky, build_sky)
 
 #Background
 scroll = len(level) - (screen_heigth//12)
-
 def collision(spd,crm):
     max_x = math.ceil(spd[1]+spd[3])
     min_x = int(spd[0]-spd[2])
     max_y = math.ceil(spd[0]+spd[2])    
     min_y = int(spd[1]-spd[3])
-    spd_hitbox = [set(range(min_x, max_x+1)), set(range(min_y, max_y+1))]    
-    
-    max_x = math.ceil(crm[1]+crm[3])
-    min_x = int(crm[0]-crm[2])
-    max_y = math.ceil(crm[0]+crm[2])
-    min_y = int(crm[1]-crm[3])
+    spd_hitbox = [set(range(min_x, max_x+1)), set(range(min_y, max_y+1))]        
+    min_x = int(crm[0])
+    max_x = math.ceil(min_x + ENEMY_WIDTH)
+    min_x = int(crm[1])
+    max_x = math.ceil(min_x + ENEMY_HEIGHT)
     crm_hitbox = [set(range(min_x, max_x+1)), set(range(min_y, max_y+1))]
     col = []
     col.append(spd_hitbox[0].intersection(crm_hitbox[0]))
@@ -74,9 +72,6 @@ def level_to_screen(row, col):  # -> (x, y)
 def screen_to_level(x, y):  # -> (row, col)
     return y/12+scroll,x/12
 
-
-
-# https://stackoverflow.com/questions/3838329/how-can-i-check-if-two-segments-intersect
 # Return true if line segments AB and CD intersect
 def intersect(A,B,C,D):
     return ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D)
@@ -289,10 +284,11 @@ while running:
         # x, y - jogador
         spd_width = spiderman.get_width()
         spd_height = spiderman.get_height()
-        if collision((x, y, spd_width/2, spd_height/2), (ex, ey, ENEMY_WIDTH/2, ENEMY_HEIGHT/2)):
+        if collision((x, y, spd_width/2, spd_height/2), (ex, ey, ENEMY_WIDTH, ENEMY_HEIGHT)):
             del enemies_rows[i]
             del enemies_cols[i]
             del enemies_times[i]
+            break
             
 
     ########## Draw #########
@@ -308,6 +304,7 @@ while running:
         ex, ey = level_to_screen(enemy_row, enemy_col)
         ey -= ENEMY_HEIGHT
         # pygame.draw.rect(screen, 'brown', (ex, ey, ENEMY_WIDTH, ENEMY_HEIGHT))
+        # pygame.draw.rect(screen, 'blue', (ex, ey, ENEMY_WIDTH/2, ENEMY_HEIGHT/2))
         screen.blit(criminal,(ex-12,ey-13))
     
     if web_active or web_shooting:
